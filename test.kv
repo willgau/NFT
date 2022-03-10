@@ -1,0 +1,102 @@
+<ScreenManagement>:
+    MenuScreen:
+        id: name
+        name: 'menu'
+
+    SettingsScreen:
+        id: settings
+        name: 'settings'
+
+    QRScreen:
+        id: qr
+        name: 'qr'
+
+    ReadQRScreen:
+        id: readqr
+        name: 'readqr'
+
+<MenuScreen>:
+    BoxLayout:
+        Button:
+            text: "Goto Driver's License Page"
+            on_release:
+                root.manager.current = 'settings'
+                root.manager.ids.settings.RenderDriverLicense(self)    # optional: passing Button instance
+
+        Button:
+            text: 'Goto settings & invoke function xyz'
+            on_release:
+                root.manager.current = 'settings'
+                root.manager.ids.settings.func_xyz(self)    # optional: passing Button instance
+        Button:
+            text: 'Goto read qr page'
+            on_release:
+                root.manager.current = 'readqr'
+
+<SettingsScreen>:
+    img: asyn_image
+    label1: label1
+    label2: label2
+    BoxLayout:
+        orientation: 'vertical'
+        AsyncImage:
+            id: asyn_image
+            nocache: True
+            allow_stretch: True
+        Label:
+            id: label1
+            text:  ''
+            font_size: 50
+            pos_hint: {"x":0,"top":0}
+        Label:
+            id: label2
+            text:  ''
+            font_size: 25
+            pos_hint: {"x":0,"top":0}
+        Label:
+            id:dummy
+            text:''
+    BoxLayout:
+        Button:
+            text: 'QR Page'
+            size_hint: None, None
+            on_release:
+                root.manager.current = 'qr'
+                root.manager.ids.qr.RenderQRCode(self)
+        Button:
+            text: 'Back to menu'
+            on_press: root.manager.current = 'menu'
+            size_hint: None, None
+
+
+
+<QRScreen>:
+    img: img
+    BoxLayout:
+        Image:
+            id: img
+            allow_stretch: True
+    BoxLayout:
+        Button:
+            text: 'Previous Page'
+            size_hint: None, None
+            on_release:
+                root.manager.current = 'settings'
+                root.manager.ids.settings.RenderDriverLicense(self)
+        Button:
+            text: 'Back to menu'
+            on_press: root.manager.current = 'menu'
+            size_hint: None, None
+
+<ReadQRScreen>:
+    cam: qrcodecam
+    BoxLayout:
+        orientation: 'vertical'
+        ZBarCam:
+            id: qrcodecam
+        Button:
+            text: ' '.join([str(symbol.data) for symbol in qrcodecam.symbols])
+            on_press:
+                root.manager.ids.readqr.test(self)
+            on_release:
+                root.manager.current = 'menu'
